@@ -1,5 +1,6 @@
 -- WING database schema (Supabase / Postgres)
--- Apply via `supabase db push`, or paste into the Supabase SQL editor.
+-- Apply as described in README.md, "Setting up the backend".
+-- 0002 changes some of these tables; its comments say how they work now.
 
 create table buildings (
   id text primary key,          -- e.g. '4W' (4 West)
@@ -25,12 +26,13 @@ create table nodes (
   lat float
 );
 
--- Edges = corridor segments / connections between nodes. Undirected, weighted by distance.
+-- Edges = corridor segments / connections between nodes, weighted by distance.
+-- Two-way unless 0002's one_way is set.
 create table edges (
   id serial primary key,
   from_node text references nodes(id),
   to_node text references nodes(id),
-  weight float not null,        -- distance in metres, used directly as the Dijkstra edge cost
+  weight float not null,        -- distance in metres; routing turns it into seconds (0002, section 5)
   accessible boolean default true  -- false for step-only connections (e.g. a short flight of stairs used as a shortcut)
 );
 

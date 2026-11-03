@@ -30,6 +30,11 @@ Then paste `outdoor-import.sql` into the Supabase SQL editor.
   `select c.*, e.from_node, e.to_node from closures c join edges e on e.id = c.edge_id where e.source = 'osm';`
   Delete those rows, run the import, then add the still-active ones again,
   finding the new `edge_id` by `from_node` and `to_node`.
+- **Closures on OSM nodes don't stop it.** If a node is no longer in OSM,
+  the import deletes it and any closure on it, without an error. Before
+  re-importing, list them:
+  `select c.* from closures c join nodes n on n.id = c.node_id where n.source = 'osm';`
+  and check each node is still there afterwards.
 
 `fetch` finds the campus by its OSM outline (`--campus "University of Bath"`
 is the default) and adds 100 m around it. Use `--bbox south,west,north,east`

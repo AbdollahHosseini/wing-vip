@@ -187,7 +187,8 @@ uses (see `backend/osm/README.md`).
   rule that keeps it organised.
 - **`backend/supabase/migrations/`** — the database schema.
 - **`backend/supabase/seed.sql`** — a small worked example (Room 1.01 →
-  two junctions → Room 1.08 + a lift) used by `frontend/tests/dijkstra.test.ts`.
+  two junctions → Room 1.08 + a lift). The tests don't read it: they use a
+  copy of it, plus a second floor, in `frontend/tests/testGraph.ts`.
 - **`backend/supabase/functions/`** — empty, reserved for Edge Functions, if
   we ever need logic that can't run in the browser. Nothing needs this yet.
 - **`docs/`** — `hosting.md` (Cloudflare Workers setup) and the project

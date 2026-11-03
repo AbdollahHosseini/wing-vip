@@ -50,8 +50,9 @@ alter table floors
 --                           counter-clockwise
 -- The nodes_geo view computes map_lng / map_lat from that record. Until a
 -- building has an origin, it falls back to the node's own lng / lat, so
--- existing data keeps working. Once every building is aligned, the frontend
--- reads nodes_geo and nodes.lng / nodes.lat can be dropped.
+-- existing data keeps working. The frontend reads nodes_geo. Keep
+-- nodes.lng / nodes.lat even once every building is aligned: outdoor nodes
+-- (below) are placed by them, and nodes_geo depends on them.
 
 alter table buildings
   add column origin_lng float,
@@ -202,7 +203,9 @@ where a.floor_id = b.floor_id
 -- set. Routing skips anything in active_closures, so a broken lift needs one
 -- row here, not a data edit. Closing a lift node closes every edge to it.
 -- An edge with a closure can't be deleted (restrict), so re-running the OSM
--- import never drops a closure silently: see backend/osm/README.md.
+-- import stops instead of dropping an edge closure. A node closure is
+-- deleted with its node (cascade): if the import removes an OSM node, its
+-- closure goes too. See backend/osm/README.md.
 
 create table closures (
   id bigint generated always as identity primary key,

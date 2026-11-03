@@ -1,6 +1,7 @@
 -- Minimal seed data: one floor of one building, enough nodes to route
 -- from Room 1.01 to Room 1.08, passing through two corridor junctions.
--- This is the exact example used in tests/dijkstra.test.ts.
+-- frontend/tests/testGraph.ts has a copy of it, plus a second floor, for
+-- the tests. Change both together.
 -- Load it after all migrations (see README.md, "Setting up the backend").
 --
 --   [1.01]---(j1)---(j2)---[1.08]
