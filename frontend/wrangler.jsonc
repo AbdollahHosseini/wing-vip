@@ -1,0 +1,46 @@
+// Cloudflare Workers hosting for WING. Step-by-step setup: ../docs/hosting.md
+//
+// This is an assets-only Worker: there is no "main" script, so no Worker
+// code of ours runs. Cloudflare serves the files that `npm run build` puts
+// in ./dist, and requests for static assets are free.
+//
+// Always pass an environment:
+//   npx wrangler deploy --env staging      (Workers Builds does this on main)
+//   npx wrangler preview --env staging     (Workers Builds does this on other branches)
+//   npx wrangler deploy --env production   (Workers Builds does this on live, from launch in April; never by hand)
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+
+  // Top-level settings are inherited by both environments below.
+  // The top-level name is the staging Worker on purpose: a deploy that
+  // forgets --env lands on staging, never on the live site.
+  "name": "wing-staging",
+
+  // Wrangler 4.156.2 (workerd 1.20261102.1) supports dates up to 2026-11-02.
+  // Move it forward only together with a Wrangler upgrade.
+  "compatibility_date": "2026-11-02",
+
+  "assets": {
+    "directory": "./dist",
+    // Any path that is not a file in ./dist gets index.html with 200 OK,
+    // so links into the app (for example /route/...) still load.
+    "not_found_handling": "single-page-application"
+  },
+
+  "env": {
+    // Deployed from main by Workers Builds.
+    // https://wing-staging.<your-subdomain>.workers.dev
+    "staging": {
+      "name": "wing-staging",
+      // Required by `wrangler preview` (branch and pull request Previews).
+      // Empty because the site has no runtime variables or bindings.
+      "previews": {}
+    },
+
+    // The live site. Used only from launch in April.
+    // https://wing.<your-subdomain>.workers.dev until a custom domain is added.
+    "production": {
+      "name": "wing"
+    }
+  }
+}

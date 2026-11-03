@@ -19,8 +19,8 @@ export function SearchScreen({ buildingId, currentNodeId, onDestinationChosen }:
   return (
     <div>
       <h1>You are at: {currentLabel}</h1>
-      <label>Where do you want to go?</label>
-      <select onChange={(e) => onDestinationChosen(e.target.value)} defaultValue="">
+      <label htmlFor="destination">Where do you want to go?</label>
+      <select id="destination" onChange={(e) => onDestinationChosen(e.target.value)} defaultValue="">
         <option value="" disabled>Choose a destination…</option>
         {rooms.map((n) => (
           <option key={n.id} value={n.id}>{n.label}</option>

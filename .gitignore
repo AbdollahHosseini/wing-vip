@@ -1,0 +1,30 @@
+# Dependencies: npm install recreates these
+node_modules/
+
+# Build output
+dist/
+.vite/
+.wrangler/
+
+# Written by `supabase link` (project ref and connection details)
+backend/supabase/.temp/
+
+# Local settings and secrets: copy .env.example to .env instead
+.env
+.env.*
+!.env.example
+.dev.vars*
+
+# Test output
+coverage/
+playwright-report/
+test-results/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Editors and operating systems
+.DS_Store
+Thumbs.db
+.idea/

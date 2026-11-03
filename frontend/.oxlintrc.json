@@ -1,0 +1,202 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["eslint", "typescript", "unicorn", "oxc", "react", "jsx-a11y", "import", "vitest"],
+  "categories": {
+    "correctness": "error",
+    "suspicious": "error"
+  },
+  "ignorePatterns": ["node_modules/**", "dist/**", "coverage/**", ".wrangler/**"],
+  "rules": {
+    "jsx-a11y/alt-text": "error",
+    "jsx-a11y/anchor-ambiguous-text": "error",
+    "jsx-a11y/anchor-has-content": "error",
+    "jsx-a11y/anchor-is-valid": "error",
+    "jsx-a11y/aria-activedescendant-has-tabindex": "error",
+    "jsx-a11y/aria-props": "error",
+    "jsx-a11y/aria-proptypes": "error",
+    "jsx-a11y/aria-role": "error",
+    "jsx-a11y/aria-unsupported-elements": "error",
+    "jsx-a11y/autocomplete-valid": "error",
+    "jsx-a11y/click-events-have-key-events": "error",
+    "jsx-a11y/control-has-associated-label": "error",
+    "jsx-a11y/heading-has-content": "error",
+    "jsx-a11y/html-has-lang": "error",
+    "jsx-a11y/iframe-has-title": "error",
+    "jsx-a11y/img-redundant-alt": "error",
+    "jsx-a11y/interactive-supports-focus": "error",
+    "jsx-a11y/label-has-associated-control": "error",
+    "jsx-a11y/lang": "error",
+    "jsx-a11y/media-has-caption": "error",
+    "jsx-a11y/mouse-events-have-key-events": "error",
+    "jsx-a11y/no-access-key": "error",
+    "jsx-a11y/no-aria-hidden-on-focusable": "error",
+    "jsx-a11y/no-autofocus": "error",
+    "jsx-a11y/no-distracting-elements": "error",
+    "jsx-a11y/no-interactive-element-to-noninteractive-role": "error",
+    "jsx-a11y/no-noninteractive-element-interactions": "error",
+    "jsx-a11y/no-noninteractive-element-to-interactive-role": "error",
+    "jsx-a11y/no-noninteractive-tabindex": "error",
+    "jsx-a11y/no-redundant-roles": "error",
+    "jsx-a11y/no-static-element-interactions": "error",
+    "jsx-a11y/prefer-tag-over-role": "error",
+    "jsx-a11y/role-has-required-aria-props": "error",
+    "jsx-a11y/role-supports-aria-props": "error",
+    "jsx-a11y/scope": "error",
+    "jsx-a11y/tabindex-no-positive": "error",
+
+    "react/rules-of-hooks": "error",
+    "react/exhaustive-deps": "error",
+    "react/exhaustive-effect-dependencies": "off",
+    "react/hooks": "off",
+    "react/only-export-components": ["error", { "allowConstantExport": true }],
+    "react/react-in-jsx-scope": "off",
+
+    "import/no-cycle": "error",
+    "import/no-duplicates": "error",
+    "import/no-unassigned-import": ["error", { "allow": ["**/*.css"] }],
+
+    "unicorn/consistent-function-scoping": "off"
+  },
+  "overrides": [
+    {
+      "files": ["src/types/**"],
+      "rules": {
+        "no-restricted-imports": ["error", {
+          "patterns": [
+            {
+              "group": ["../**"],
+              "message": "types/ imports nothing: it only describes the shape of our data. See the folder rule in frontend/README.md."
+            },
+            {
+              "regex": "^[^.]",
+              "message": "types/ imports nothing, not even npm packages. See the folder rule in frontend/README.md."
+            }
+          ]
+        }]
+      }
+    },
+    {
+      "files": ["src/utils/**"],
+      "rules": {
+        "no-restricted-imports": ["error", {
+          "patterns": [
+            {
+              "group": ["../**", "!**/types", "!**/types/**", "!**/utils", "!**/utils/**"],
+              "message": "utils/ holds pure algorithms: it may import types/ only. See the folder rule in frontend/README.md."
+            },
+            {
+              "regex": "^[^.]",
+              "message": "utils/ holds pure algorithms: no npm packages (no React, no Supabase). See the folder rule in frontend/README.md."
+            }
+          ]
+        }]
+      }
+    },
+    {
+      "files": ["src/repositories/**"],
+      "rules": {
+        "no-restricted-imports": ["error", {
+          "patterns": [
+            {
+              "group": ["../**", "!**/types", "!**/types/**", "!**/repositories", "!**/repositories/**"],
+              "message": "repositories/ may import types/ and @supabase/supabase-js only. See the folder rule in frontend/README.md."
+            },
+            {
+              "regex": "^react(-dom)?(/|$)",
+              "message": "No React in repositories/: they only fetch data. Put React code in a hook. See the folder rule in frontend/README.md."
+            }
+          ]
+        }]
+      }
+    },
+    {
+      "files": ["src/services/**"],
+      "rules": {
+        "no-restricted-imports": ["error", {
+          "patterns": [
+            {
+              "group": ["../**", "!**/types", "!**/types/**", "!**/utils", "!**/utils/**", "!**/repositories", "!**/repositories/**", "!**/services", "!**/services/**"],
+              "message": "services/ may import types/, utils/ and repositories/ only. See the folder rule in frontend/README.md."
+            },
+            {
+              "regex": "^react(-dom)?(/|$)",
+              "message": "No React in services/: put React code in a hook. See the folder rule in frontend/README.md."
+            },
+            {
+              "regex": "^@supabase/",
+              "message": "Only repositories/ talk to Supabase: call a repository function instead. See the folder rule in frontend/README.md."
+            }
+          ]
+        }]
+      }
+    },
+    {
+      "files": ["src/hooks/**"],
+      "rules": {
+        "no-restricted-imports": ["error", {
+          "patterns": [
+            {
+              "group": ["../**", "!**/types", "!**/types/**", "!**/services", "!**/services/**", "!**/repositories", "!**/repositories/**", "!**/hooks", "!**/hooks/**"],
+              "message": "hooks/ may import types/, services/, repositories/ and React only. See the folder rule in frontend/README.md."
+            },
+            {
+              "regex": "^@supabase/",
+              "message": "Only repositories/ talk to Supabase: call a repository function instead. See the folder rule in frontend/README.md."
+            }
+          ]
+        }]
+      }
+    },
+    {
+      "files": ["src/components/**"],
+      "rules": {
+        "no-restricted-imports": ["error", {
+          "patterns": [
+            {
+              "group": ["../**", "!**/types", "!**/types/**", "!**/hooks", "!**/hooks/**", "!**/components", "!**/components/**"],
+              "message": "components/ may import hooks/, types/ and other components only. Reach data and logic through a hook. See the folder rule in frontend/README.md."
+            },
+            {
+              "regex": "^@supabase/",
+              "message": "Only repositories/ talk to Supabase: use a hook that calls a repository. See the folder rule in frontend/README.md."
+            }
+          ]
+        }]
+      }
+    },
+    {
+      "files": ["src/screens/**"],
+      "rules": {
+        "no-restricted-imports": ["error", {
+          "patterns": [
+            {
+              "group": ["../**", "!**/types", "!**/types/**", "!**/hooks", "!**/hooks/**", "!**/components", "!**/components/**", "!**/screens", "!**/screens/**"],
+              "message": "screens/ may import hooks/, types/ and components/ only. Reach data and logic through a hook. See the folder rule in frontend/README.md."
+            },
+            {
+              "regex": "^@supabase/",
+              "message": "Only repositories/ talk to Supabase: use a hook that calls a repository. See the folder rule in frontend/README.md."
+            }
+          ]
+        }]
+      }
+    },
+    {
+      "files": ["src/*.ts", "src/*.tsx"],
+      "rules": {
+        "no-restricted-imports": ["error", {
+          "patterns": [
+            {
+              "group": ["./*/**", "./utils", "./services", "./repositories", "!./types/**", "!./hooks/**", "!./components/**", "!./screens/**"],
+              "message": "App.tsx and main.tsx are UI: they may import screens/, components/, hooks/ and types/ only. See the folder rule in frontend/README.md."
+            },
+            {
+              "regex": "^@supabase/",
+              "message": "Only repositories/ talk to Supabase: use a hook that calls a repository. See the folder rule in frontend/README.md."
+            }
+          ]
+        }]
+      }
+    }
+  ]
+}
