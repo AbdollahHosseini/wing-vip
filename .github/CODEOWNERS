@@ -18,7 +18,7 @@
 #
 # Placeholders:
 #   OWNER-LEADS         all leads: anything no other rule covers (README,
-#                       TASKS.md, docs/)
+#                       docs/)
 #   OWNER-REPO-CONFIG   repo-wide config in the root folder
 #   OWNER-CI            CI workflows, these review rules, the PR template
 #   OWNER-FRONTEND      the React app in frontend/
