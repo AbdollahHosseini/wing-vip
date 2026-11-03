@@ -1,0 +1,90 @@
+# Checks every pull request and every push to main. Once branch protection
+# requires these checks, a red check blocks merging. The check names GitHub
+# shows are the job names below: "Frontend" and "OSM import up to date".
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+# A newer push to the same pull request cancels the run it replaces; every
+# push to main gets its own full run.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  frontend:
+    name: Frontend
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Set up Node (version from .nvmrc)
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Type-check
+        run: npm run typecheck
+
+      - name: Test
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+      # Uses dist/ from the Build step; needs no Cloudflare account.
+      - name: Check Cloudflare config
+        run: npx wrangler deploy --dry-run --env staging && npx wrangler deploy --dry-run --env production
+
+  osm:
+    name: OSM import up to date
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Set up Node (version from .nvmrc)
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          # The import script has no dependencies, so there is nothing to cache.
+          package-manager-cache: false
+
+      - name: Rebuild the import from the committed snapshot
+        run: node backend/osm/import-osm.mjs build
+
+      - name: Check the committed import matches the snapshot
+        run: |
+          # Assigned first so that a failing git command fails the step.
+          changes=$(git status --porcelain -- backend/osm)
+          if [ -n "$changes" ]; then
+            echo "::error title=OSM import out of date::outdoor-import.sql or entrances-to-survey.csv does not match campus-snapshot.json. Run 'node backend/osm/import-osm.mjs build' from the repo root and commit all three files."
+            git status --short -- backend/osm
+            git --no-pager diff --stat -- backend/osm
+            exit 1
+          fi
+          echo "outdoor-import.sql and entrances-to-survey.csv match campus-snapshot.json."

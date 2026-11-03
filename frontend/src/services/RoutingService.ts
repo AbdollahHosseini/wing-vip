@@ -1,32 +1,39 @@
 /**
- * Orchestration: combines a repository + two utils into one meaningful
- * operation — "calculate a route." This is the layer a teammate touches
- * to change what that operation means (e.g. preferring lifts over
- * stairs for accessibility routing would be a change here, not in the
- * algorithm or the UI).
+ * Orchestration: combines the graph, today's closures and three utils into
+ * one meaningful operation — "calculate a route." This is the layer a
+ * teammate touches to change what that operation means; what each route
+ * type avoids or prefers lives in utils/routeCost.ts.
  *
  * Rule this layer exists to teach: if a "service" function would just
  * forward straight to a repository with nothing added, skip the service
  * and call the repository directly from the hook instead.
  */
-import { fetchGraph } from '../repositories/graphRepository';
+import { fetchActiveClosures } from '../repositories/closureRepository';
+import { getGraph } from './GraphService';
 import { findShortestPath } from '../utils/dijkstra';
 import { generateDirections } from '../utils/directions';
-import type { Route } from '../types/domain';
+import { makeEdgeCost, travelSeconds } from '../utils/routeCost';
+import type { Route, RouteProfile } from '../types/domain';
 
 export async function calculateRoute(
   buildingId: string,
   fromNodeId: string,
-  toNodeId: string
+  toNodeId: string,
+  profile: RouteProfile = 'fastest'
 ): Promise<Route | null> {
-  const graph = await fetchGraph(buildingId);
-  const result = findShortestPath(graph, fromNodeId, toNodeId);
+  const [graph, closures] = await Promise.all([getGraph(buildingId), fetchActiveClosures()]);
+
+  const result = findShortestPath(graph, fromNodeId, toNodeId, makeEdgeCost(profile, closures));
   if (!result) return null;
 
-  const steps = generateDirections(graph, result.path);
+  const { path, edges } = result;
   return {
-    path: result.path,
-    totalDistanceMetres: result.totalDistanceMetres,
-    steps,
+    path,
+    edges,
+    totalDistanceMetres: edges.reduce((sum, e) => sum + e.weightMetres, 0),
+    // Real travel time, without the penalties used to choose the route
+    estimatedSeconds: edges.reduce((sum, e) => sum + travelSeconds(e, profile), 0),
+    unsurveyedConnections: edges.filter((e) => e.accessible === null).length,
+    steps: generateDirections(graph, path, edges),
   };
 }

@@ -1,0 +1,23 @@
+# Line endings: git stores text files with LF and checks them out with LF on
+# every computer, Windows included, so diffs never fill up with CRLF changes.
+# Git works out by itself which files are text (text=auto).
+* text=auto eol=lf
+
+# Windows batch files only run reliably with CRLF (there are none yet).
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Binary files: never convert or diff them. Git usually spots these by
+# itself, but a PDF floor plan can be mistaken for text and broken.
+*.pdf   binary
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.gif   binary
+*.webp  binary
+*.ico   binary
+*.woff  binary
+*.woff2 binary
+*.zip   binary
+*.gpkg  binary
+*.qgz   binary

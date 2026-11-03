@@ -1,6 +1,7 @@
 -- Minimal seed data: one floor of one building, enough nodes to route
 -- from Room 1.01 to Room 1.08, passing through two corridor junctions.
 -- This is the exact example used in tests/dijkstra.test.ts.
+-- Load it after all migrations (see README.md, "Setting up the backend").
 --
 --   [1.01]---(j1)---(j2)---[1.08]
 --                     |
@@ -8,7 +9,7 @@
 
 insert into buildings (id, name) values ('4W', '4 West');
 
-insert into floors (id, building_id, level) values ('4W-1', '4W', 1);
+insert into floors (id, building_id, level, label) values ('4W-1', '4W', 1, 'Level 1');
 
 insert into nodes (id, floor_id, type, label, x, y, lng, lat) values
   ('4W-1.01',   '4W-1', 'room',     'Room 1.01', 0,  0,  -2.3263, 51.3800),

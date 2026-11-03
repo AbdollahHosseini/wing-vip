@@ -1,0 +1,58 @@
+# CODEOWNERS: who reviews changes to each part of WING.
+#
+# When a pull request changes a file, GitHub asks that file's owners to
+# review it. With "Require review from Code Owners" turned on in the branch
+# protection rule, the pull request can't merge until one of them approves.
+# GitHub reads this file from the pull request's base branch.
+#
+# Every rule below is switched off (commented out) until the owners are
+# known. To fill it in:
+#   1. Replace each OWNER-... placeholder with a GitHub @username. Teams
+#      (@organisation/team-name) only work once the repo moves to a GitHub
+#      organisation; then the yearly handover only changes who is in the
+#      team, not this file.
+#   2. Delete the "# " in front of each rule you want to switch on.
+#   3. Give every owner write access to the repo (a team must also be
+#      visible). GitHub skips owners it can't use; open this file on
+#      github.com afterwards to see any errors.
+#
+# Placeholders:
+#   OWNER-LEADS         all leads: anything no other rule covers (README,
+#                       TASKS.md, docs/)
+#   OWNER-REPO-CONFIG   repo-wide config in the root folder
+#   OWNER-CI            CI workflows, these review rules, the PR template
+#   OWNER-FRONTEND      the React app in frontend/
+#   OWNER-POSITIONING   QR codes and positioning (inside frontend/)
+#   OWNER-DATABASE      Supabase migrations, seed data and Edge Functions
+#   OWNER-OSM           the OpenStreetMap import and its snapshot
+#
+# Patterns work like .gitignore, except that "!" and "[ ]" don't work.
+# The LAST rule that matches a file wins, so general rules come first.
+
+# Anything not matched by a later rule
+# *                                           OWNER-LEADS
+
+# Root config
+# /.gitignore                                 OWNER-REPO-CONFIG
+# /.gitattributes                             OWNER-REPO-CONFIG
+# /.editorconfig                              OWNER-REPO-CONFIG
+# /.nvmrc                                     OWNER-REPO-CONFIG
+# /.vscode/                                   OWNER-REPO-CONFIG
+
+# CI, CODEOWNERS and the pull request template
+# /.github/                                   OWNER-CI
+
+# The React app
+# /frontend/                                  OWNER-FRONTEND
+
+# QR codes and positioning: the positioning lead's files inside frontend/
+# /frontend/src/screens/ScanScreen.tsx        OWNER-POSITIONING
+# /frontend/src/components/QRScanner.tsx      OWNER-POSITIONING
+# /frontend/src/hooks/useQrScanner.ts         OWNER-POSITIONING
+# /frontend/src/repositories/qrRepository.ts  OWNER-POSITIONING
+
+# Database: schema, Row Level Security, seed data, Edge Functions
+# /backend/supabase/                          OWNER-DATABASE
+
+# OpenStreetMap import, snapshot and survey list
+# /backend/osm/                               OWNER-OSM

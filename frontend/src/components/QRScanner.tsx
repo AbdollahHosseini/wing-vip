@@ -27,5 +27,6 @@ export function QRScanner({ onScan }: Props) {
     return () => scanner.stop();
   }, [onScan]);
 
-  return <video ref={videoRef} style={{ width: '100%', borderRadius: 12 }} />;
+  // muted: the camera preview has no sound, so it needs no captions (qr-scanner mutes it anyway)
+  return <video ref={videoRef} muted style={{ width: '100%', borderRadius: 12 }} />;
 }
